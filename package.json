@@ -1,0 +1,10 @@
+﻿{
+  "name": "nanogram-atolyesi",
+  "version": "1.0.0",
+  "description": "Renkli nanogram oyunu ve editörü",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}

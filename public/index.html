@@ -1,0 +1,172 @@
+﻿<!doctype html>
+<html lang="tr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nanogram Atölyesi</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Nanogram Atölyesi</p>
+        <h1>Renkli Nanogram Editörü</h1>
+        <p class="subtitle">
+          Renklerle çiz, sayıları tıkla, tuval boyutunu ayarla ve bulmacanı oluştur.
+        </p>
+      </div>
+      <div class="status-card">
+        <div>
+          <span class="status-label">Tuval</span>
+          <strong id="sizeLabel">10 x 10</strong>
+        </div>
+        <div>
+          <span class="status-label">Mod</span>
+          <strong id="modeLabel">Çizim</strong>
+        </div>
+        <div>
+          <span class="status-label">Sayılar</span>
+          <strong id="clueLabel">Canlı</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel">
+        <div class="card">
+          <h2>Örnek Seviye</h2>
+          <div class="note" id="gameDescription" style="margin-bottom: 15px;">
+            Verilen sayılara göre kutuları boyayarak gizli resmi ortaya çıkarın.
+          </div>
+
+          <div class="field-row" style="margin-bottom: 10px;">
+            <label>Seviye:</label>
+            <select id="levelSelect">
+              <!-- JS ile doldurulacak -->
+            </select>
+          </div>
+
+          <!-- Gizli canvas: Resim verisi oluşturmak için -->
+          <canvas id="targetPreview" width="100" height="100" style="display: none;"></canvas>
+
+          <button class="primary" id="loadSampleLevelBtn">Seviyeyi Başlat</button>
+
+          <details style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
+            <summary style="cursor: pointer; font-size: 0.9rem; color: var(--accent-2); font-weight: 600;">Nasıl
+              Oynanır?</summary>
+            <div style="margin-top: 8px; font-size: 0.85rem; color: var(--muted); line-height: 1.5;">
+              <p style="margin: 0;"><strong>Resmi Çiz:</strong> Satır ve sütunların başındaki sayılar, o sırada kaç tane
+                kutunun boyanması gerektiğini gösterir. Her sayı grubu ardışık boyalı blokları temsil eder; aradaki
+                boşluklar blokları ayırır. Örnek: "3 1 2" bir satırda önce 3 boyalı hücre, sonra en az 1 boş hücre,
+                sonra 2 boyalı hücre olduğu anlamına gelir.</p>
+
+              <p style="margin: 8px 0 0 0;"><strong>Kontroller:</strong></p>
+              <ul style="margin: 6px 0 0 14px; color: var(--muted);">
+                <li><strong>Sol Tık:</strong> Seçili renkle hücreyi boya. (Tıklama veya sürükleme ile birden fazla hücreyi
+                  kolayca boyayabilirsiniz.)</li>
+                <li><strong>Sağ Tık:</strong> Hücreyi temizle veya <em>Boş</em> olarak işaretle; bu, o hücrenin boş
+                  bırakılacağını belirtir.</li>
+                <li><strong>Mobil:</strong> Sağ tık olmadığından, ekranda Silgi aracını kullanarak hücreleri temizleyin.</li>
+              </ul>
+
+              <p style="margin: 8px 0 0 0;"><strong>Sayıları Düzenleme:</strong> "Düzenle" aracı seçiliyken sayı hücresine tıklayarak
+                sayıyı artırın; sağ tıkla azaltın. Bir hücreye <strong>çift tıklayarak</strong> doğrudan sayı girebilirsiniz.
+                "Sil" aracı ise hücreyi tamamen temizler.</p>
+
+              <p style="margin: 8px 0 0 0;"><strong>İpuçları:</strong></p>
+              <ul style="margin: 6px 0 0 14px; color: var(--muted);">
+                <li>Önce kolay görünen satır ve sütunlardan başlayın; büyük blokları çözdükçe zor alanlar daha net olur.</li>
+                <li>Sayılar Canlı modundaysa yaptığınız değişiklikler hemen güncellenir; değilse "Sayıdan Görsel Oluştur"
+                  ile kontrol edin.</li>
+                <li>Renk paletinden yeni renk ekleyerek veya hücreleri temizleyerek denemeler yapabilirsiniz.</li>
+              </ul>
+
+              <p style="margin: 8px 0 0 0;">Daha fazla yardıma ihtiyaç varsa örnek seviyeyi yükleyin veya sağlanan araçları
+                kullanarak deneme yapın.</p>
+            </div>
+          </details>
+        </div>
+        <div class="card">
+          <h2>Tuval Ayarı</h2>
+          <div class="field-row">
+            <label for="rowsInput">Satır</label>
+            <input id="rowsInput" type="number" min="5" max="30" value="10" />
+          </div>
+          <div class="field-row">
+            <label for="colsInput">Sütun</label>
+            <input id="colsInput" type="number" min="5" max="30" value="10" />
+          </div>
+          <div class="field-row">
+            <label for="cellSizeInput">Hücre Boyutu</label>
+            <input id="cellSizeInput" type="range" min="18" max="40" value="28" />
+          </div>
+          <label class="switch">
+            <input id="autoFitToggle" type="checkbox" checked />
+            <span>Ekrana otomatik sığdır</span>
+          </label>
+          <button class="primary" id="applySizeBtn">Uygula</button>
+        </div>
+
+        <div class="card">
+          <h2>Çizim Araçları</h2>
+          <div class="toggle-group" role="group" aria-label="Araç seçimi">
+            <button class="toggle active" data-tool="pen">Kalem</button>
+            <button class="toggle" data-tool="eraser">Silgi</button>
+          </div>
+          <div class="palette" id="palette"></div>
+          <div class="field-row compact">
+            <input id="customColor" type="color" value="#ff8a3d" />
+            <button class="ghost" id="addColorBtn">Renk Ekle</button>
+          </div>
+          <button class="ghost" id="clearGridBtn">Tuvali Temizle</button>
+        </div>
+
+        <div class="card">
+          <h2>Sayı Ayarları</h2>
+          <label class="switch">
+            <input id="topCluesToggle" type="checkbox" />
+            <span>Üst sayıları göster</span>
+          </label>
+          <div class="toggle-group" id="clueToolGroup" role="group" aria-label="Sayı aracı">
+            <button class="toggle active" data-clue-tool="edit">Düzenle</button>
+            <button class="toggle" data-clue-tool="clear">Sil</button>
+          </div>
+          <div class="note" id="clueNote">
+            Düzenle: tıkla artır + renk uygula. Sağ tıkla: azalt. <strong>Çift tıkla: elle sayı gir.</strong> Sil:
+            hücreyi temizler.
+          </div>
+          <div class="action-row">
+            <button class="primary" id="generateFromCluesBtn">Sayıdan Görsel Oluştur</button>
+            <button class="ghost" id="clearCluesBtn">Sayıları Temizle</button>
+          </div>
+        </div>
+
+
+      </section>
+
+      <section class="board">
+        <div class="board-wrap" id="boardWrap">
+          <div class="top-clues" id="topClues"></div>
+          <div class="left-clues" id="leftClues"></div>
+          <div class="grid" id="grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <span>Not:</span> Sol tık boya, sağ tık sil. Mobilde Silgi butonunu kullan.
+      </div>
+      <div>
+        <span>Sayı düzenlemek için</span> “Düzenle” seçip sayı hücresine dokun.
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
